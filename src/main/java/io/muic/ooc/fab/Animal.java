@@ -3,32 +3,18 @@ package io.muic.ooc.fab;
 import java.util.List;
 import java.util.Random;
 
-public abstract class Animal {
-    // Whether the animal is alive or not.
-    private boolean alive;
-
-    // The animal's position.
-    protected Location location;
-    // The field occupied.
-    protected Field field;
+public abstract class Animal extends Actor {
     // Individual characteristics (instance fields).
     // The animal's age.
-    protected int age;
+    protected int age = 0;
 
     private static final Random RANDOM = new Random();
 
-
-    /**
-     * Check whether the animal is alive or not.
-     *
-     * @return true if the animal is still alive.
-     */
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
+    protected void initialize(boolean randomAge, Field field, Location location) {
+        super.initialize(randomAge, field, location);
+        if (randomAge) {
+            age = RANDOM.nextInt(getMaxAge());
+        }
     }
 
     /**
@@ -36,11 +22,11 @@ public abstract class Animal {
      *
      * @return The animal's location.
      */
-    public Location getLocation() {
+    protected Location getLocation() {
         return location;
     }
 
-    public abstract int getMaxAge();
+    protected abstract int getMaxAge();
 
     /**
      * Increase the age. This could result in the animal's death.
@@ -52,7 +38,6 @@ public abstract class Animal {
         }
     }
 
-
     /**
      * Indicate that the animal is no longer alive. It is removed from the field.
      */
@@ -63,19 +48,6 @@ public abstract class Animal {
             location = null;
             field = null;
         }
-    }
-
-    /**
-     * Place the animal at the new location in the given field.
-     *
-     * @param newLocation The animal's new location.
-     */
-    protected void setLocation(Location newLocation) {
-        if (location != null) {
-            field.clear(location);
-        }
-        location = newLocation;
-        field.place(this, newLocation);
     }
 
     /**
@@ -106,7 +78,9 @@ public abstract class Animal {
 
     protected abstract int getBreedingAge();
 
-    protected abstract Animal createYoung(boolean randomAge, Field field, Location location);
+    private Actor createYoung(boolean randomAge, Field field, Location location) {
+        return ActorFactory.createActor(getClass(), field, location);
+    }
 
     /**
      * Check whether or not this animal is to give birth at this step. New
@@ -121,10 +95,23 @@ public abstract class Animal {
         int births = breed();
         for (int b = 0; b < births && free.size() > 0; b++) {
             Location loc = free.remove(0);
-            Animal young = createYoung(false, field, loc);
+            Actor young = createYoung(false, field, loc);
             newAnimals.add(young);
         }
     }
 
-    public abstract void act(List<Animal> animals);
+    protected void act(List<Actor> newActor) {
+        incrementAge();
+        if (isAlive()) {
+            giveBirth(newActor);
+            // Try to move into a free location.
+            Location newLocation = moveToNewLocation();
+            if (newLocation != null) {
+                setLocation(newLocation);
+            } else {
+                // Overcrowding.
+                setDead();
+            }
+        }
+    }
 }
