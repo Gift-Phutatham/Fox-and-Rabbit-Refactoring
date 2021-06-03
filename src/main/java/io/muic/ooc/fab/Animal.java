@@ -17,15 +17,6 @@ public abstract class Animal extends Actor {
         }
     }
 
-    /**
-     * Return the animal's location.
-     *
-     * @return The animal's location.
-     */
-    protected Location getLocation() {
-        return location;
-    }
-
     protected abstract int getMaxAge();
 
     /**

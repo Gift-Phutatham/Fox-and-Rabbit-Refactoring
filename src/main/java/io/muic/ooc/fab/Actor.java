@@ -29,6 +29,10 @@ public abstract class Actor {
         field.place(this, newLocation);
     }
 
+    protected Location getLocation() {
+        return location;
+    }
+
     protected abstract Location moveToNewLocation();
 
     protected abstract void act(List<Actor> newActor);
