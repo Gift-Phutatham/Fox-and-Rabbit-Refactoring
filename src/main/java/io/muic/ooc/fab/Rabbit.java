@@ -14,10 +14,6 @@ public class Rabbit extends Animal {
 
     private static final int RABBIT_FOOD_VALUE = 9;
 
-    protected int getRabbitFoodValue() {
-        return RABBIT_FOOD_VALUE;
-    }
-
     @Override
     protected int getMaxAge() {
         return MAX_AGE;
@@ -41,5 +37,10 @@ public class Rabbit extends Animal {
     @Override
     protected Location moveToNewLocation() {
         return field.freeAdjacentLocation(location);
+    }
+
+    @Override
+    protected int getFoodValue() {
+        return RABBIT_FOOD_VALUE;
     }
 }

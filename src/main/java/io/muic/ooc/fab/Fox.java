@@ -69,21 +69,17 @@ public class Fox extends Animal {
         Iterator<Location> it = adjacent.iterator();
         while (it.hasNext()) {
             Location where = it.next();
-            Object animal = field.getObjectAt(where);
-            if (animal instanceof Rabbit) {
-                Rabbit rabbit = (Rabbit) animal;
-                if (rabbit.isAlive()) {
-                    rabbit.setDead();
-                    foodLevel = rabbit.getRabbitFoodValue();
+            Object organism = field.getObjectAt(where);
+            if (organism instanceof Rabbit) {
+                Animal animal = (Animal) organism;
+                if (animal.isAlive()) {
+                    animal.setDead();
+                    foodLevel = animal.getFoodValue();
                     return where;
                 }
             }
         }
         return null;
-    }
-
-    protected int getFoxFoodValue() {
-        return FOX_FOOD_VALUE;
     }
 
     @Override
@@ -114,5 +110,10 @@ public class Fox extends Animal {
             newLocation = field.freeAdjacentLocation(location);
         }
         return newLocation;
+    }
+
+    @Override
+    protected int getFoodValue() {
+        return FOX_FOOD_VALUE;
     }
 }

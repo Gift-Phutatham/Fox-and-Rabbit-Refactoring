@@ -105,4 +105,6 @@ public abstract class Animal extends Actor {
             }
         }
     }
+
+    protected abstract int getFoodValue();
 }

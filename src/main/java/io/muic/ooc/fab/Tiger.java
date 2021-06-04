@@ -20,6 +20,7 @@ public class Tiger extends Animal {
 
     // The tiger's food level, which is increased by eating rabbits or foxes.
     private int foodLevel;
+    private static final int TIGER_FOOD_VALUE = 9;
 
     /**
      * Create a tiger. A tiger can be created as a new born (age zero and not
@@ -68,19 +69,12 @@ public class Tiger extends Animal {
         Iterator<Location> it = adjacent.iterator();
         while (it.hasNext()) {
             Location where = it.next();
-            Object animal = field.getObjectAt(where);
-            if (animal instanceof Rabbit) {
-                Rabbit rabbit = (Rabbit) animal;
-                if (rabbit.isAlive()) {
-                    rabbit.setDead();
-                    foodLevel = rabbit.getRabbitFoodValue();
-                    return where;
-                }
-            } else if (animal instanceof Fox) {
-                Fox fox = (Fox) animal;
-                if (fox.isAlive()) {
-                    fox.setDead();
-                    foodLevel = fox.getFoxFoodValue();
+            Object organism = field.getObjectAt(where);
+            if (organism instanceof Rabbit || organism instanceof Fox) {
+                Animal animal = (Animal) organism;
+                if (animal.isAlive()) {
+                    animal.setDead();
+                    foodLevel = animal.getFoodValue();
                     return where;
                 }
             }
@@ -116,5 +110,10 @@ public class Tiger extends Animal {
             newLocation = field.freeAdjacentLocation(location);
         }
         return newLocation;
+    }
+
+    @Override
+    protected int getFoodValue() {
+        return TIGER_FOOD_VALUE;
     }
 }
